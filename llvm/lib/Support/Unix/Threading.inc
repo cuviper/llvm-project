@@ -42,7 +42,6 @@
 #endif
 
 #if defined(__linux__)
-#include <sched.h>       // For sched_getaffinity
 #include <sys/syscall.h> // For syscall codes
 #include <unistd.h>      // For syscall()
 #endif
@@ -278,7 +277,7 @@ SetThreadPriorityResult llvm::set_thread_priority(ThreadPriority Priority) {
 #include <thread>
 
 int computeHostNumHardwareThreads() {
-#ifdef __linux__
+#if defined(HAVE_SCHED_GETAFFINITY) && defined(HAVE_CPU_COUNT)
   cpu_set_t Set;
   if (sched_getaffinity(0, sizeof(Set), &Set) == 0)
     return CPU_COUNT(&Set);
